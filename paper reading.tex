@@ -1,0 +1,181 @@
+\documentclass{article}
+\def\ntitle {Paper reading}
+\def\nauthor{ Student ID: 11028253 } % default author is Zhengbo Zhou
+% \def\notes{ } % default is the submitted version
+% \def\ndate{ } % default is today's date
+% \def\needcrop{ } % crop for easy previewing
+% \def\fancysec{ } % section font become fancier 
+\input{kai.tex}
+%% redefine \emph and \bf such that they are colored and can be easily
+%% transformed back to normal \emph and \bf
+\renewcommand{\emph}[1]{\textit{\color{purple} #1}}
+\renewcommand{\bf}[1]{\textsf{\bfseries \color{purple} #1}}
+\def\dd{\mathrm{d}}
+\numberwithin{equation}{section}
+\begin{document}
+\maketitle
+% \tableofcontents
+\thispagestyle{firstpage} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% MAIN ARTICLE %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Week1}
+12
+Risken(1992)~\cite{Risken1992} conclude that Fokker Placnk equation can be solved by simulation method, eigenfunction expansion, 
+numerical integration, the variational method and matrix continued-fraction method.
+The special case of Fokker Planck equation has an analytical solution (e.g.,linear problems, stationary problems with one varibale).
+For numerical methods, Park(1996)~\cite{Park_1996} compare six finite difference methods(three fully implicit and three semi-implicit).
+
+\section*{Week2}
+\subsection*{Derivation of Fokker-Planck equation(Kolmogorov forward eq)}
+Lucas and Prescott (1971) \cite{Lucas_1971} define the stochastic process $x(t)$ as the Brownian motion with drift:
+\begin{equation}\notag
+    \dd x = \alpha \dd t + \sigma \dd w
+\end{equation}
+where $\dd w$ is the increment of a Wiener process, $\alpha$ is called the drift parameter, and 
+$\sigma$ is called the varaince parameter. We divide the time interval t into n discrete steps with the each length $\Delta t$. In each 
+step, while $x$ have the probability $P$ increase by an amount $\Delta h$, the probability of decreasing $\Delta h$ is $q=1-p$. 
+Additionally, to keep the variance of $(x_t - x_0)$ independent of the particular $\Delta t$, we set $\Delta h =\sigma \sqrt{\Delta t}$.
+The probability density function for $x(t)$ is written as $P( x,t \mid x_0,t_0)$, where $x_0$ is the given intitial value of $x$. Thus we write 
+\begin{equation}\notag
+    Prob(a\leq x(t) \leq b \mid x(t_0)=x_0) = \int_{a}^{b} P( u , t \mid x_0,t_0) \dd u.
+\end{equation}
+We assume the probability distribution is stationary and $P(x)$ satisfy
+\begin{equation}\notag
+    P(x)=p P(x-\Delta h) + q P(x+\Delta h)
+\end{equation}
+From time $t-\Delta t$ to $t$, the $x(t)$ can reach the point $x$ by increasing from the point $x- \Delta h$ or decreasing from the 
+point $x+\Delta h$:
+\begin{equation}\label{1}
+    P( x,t \mid x_0,t_0)= p P( x-\Delta h,t -\Delta t \mid x_0,t_0) + q P( x+\Delta h,t-\Delta t \mid x_0,t_0).
+\end{equation}
+
+Then we expand $P( x-\Delta h,t-\Delta t \mid x_0,t_0)$ in a Taylor series around $P(x,t \mid x_0,t_0)$:
+\begin{equation}\notag
+    P(x-\Delta h, t-\Delta t \mid x_0,t_0)=P(x,t\mid x_0,t_0)-\Delta h \frac{\partial P}{\partial t} - \Delta h \frac{\partial P}{\partial x}+ \frac{1}{2}(\Delta h)^2
+    \frac{\partial^2 P}{\partial x^2} + \cdots
+\end{equation}
+Since the third order terms and the higher order are consisted of order $(\Delta t)^{3/2}$, $(\Delta t)^2$, etc., these terms will achieve zero faster
+than $\Delta t$. Then we expand $P(x+\Delta h, t-\Delta t \mid x_0, t_0)$ similarly and substitue these expressions into \eqref{2}:
+\begin{align}\notag
+    P(x,t\mid x_0, t_0)&=(p+q)P(x,t\mid x_0,t_0)-(p+q)\Delta t \frac{\partial P}{\partial t}\\
+                       &-(p-q)\Delta h \frac{\partial P}{\partial x}+\frac{1}{2}(p+q)(\Delta h)^2 \frac{\partial^2 P}{\partial x^2}.
+\end{align}
+
+Using the discrete-time random walk representaion in Section 2.B, we substitue $p+q=1$, $p-q = (\alpha / \sigma)\sqrt{\Delta t}$ and $\Delta h = \sigma \sqrt{\Delta t} $. Then divide
+by $\Delta t$, and rerrange:
+\begin{equation}\label{2}
+    \frac{1}{2}\frac{\partial^2}{\partial x^2} P(x,t \mid x_0, t_0) - \alpha \frac{\partial}{\partial x}P(x,t \mid x_0, t_0)= \frac{\partial}{\partial t}P(x,t \mid x_0,t_0).
+\end{equation}
+Equation \eqref{2} is called the Kolmogorv forward equation for the Brownian motion with drift. More general Kolmogorov forward equation for Ito process can be find in Karlin and Taylor(1981).
+
+\subsection*{Evolution of Black-Scholes}
+In the option pricing literature, Black and Scholes(1973)\cite{Black_1973} price the derivatives securities with the underlying stock price follows a 
+geometric Brownian motion. It implies that the stock price obeys a lognormal disttribution and the implied volatility of 
+options should be a constant with different time, strike prices and maturities. However Merton(1976)\cite{Merton_1976}, Christie(1982)\cite{Christie_1982}, Johnson and Shanno(1987)
+\cite{Christie_1982} discuss variance changes instead of being a constant when price options. Use contents from \cite{AtSahalia2007} 
+\cite{Christie_1982} \cite{Johnson_1987} to discuss the volatility should be changed to stochastic volatility.
+
+\subsection*{QUAD method Andri 2003}
+Andricopoulos et al. ~\cite{Andri_2003} conclude that Latice(binomial and trinomial trees), finite-difference, and Monte Carlo techniques are three categories to 
+value derivatives.(especially powerful in pricing the path-dependent options). However, there are two main erros: "distribution error" and "nonlinearity error". 
+To reduce distribution error, finer lattice or gird can combat the source of distribution erro, which comes with a more and more computing time in each refinement.
+ By quadrature (QUAD) method, a full range of final position can be evaluated using one timestep, which improves the effiency. For reducing nonlinearity error in 
+ lattice and finite-difference methods, there are more and more sources of nonlinearity error at different values of the underlying at different time. The 
+ inflexibility of these approaches can not be cope. With QUAD, noelinearity can be avoided by positioning nodes exactly as required. It can exactly place "nodes"
+ on boundaries or discontinuities and only a single timestep is required between observations of exotic features.
+
+ 
+
+ \subsection*{Andri 2007}
+ Andricopoulos et al. ~\cite{Andri_2007} extend the quadrature method to price options involving multiple underlying assets. The avoiding of nonlinearity error 
+ makes QUAD method outperfoms Monte Carlo method in effiency and accuracy when pricing complex path-dependent options, especially with early exercise features.
+ \subsubsection*{Early version of QUAD method}
+
+ The QUAD method as a felxible, robust option pricing numerical technique. In the 
+ Black-Scholes-Merton framemwork, the option price $V(S,t)$ obeys the geometric Brownian motion:
+ \begin{equation}\notag
+     \frac{\partial V}{\partial t}+ \frac{1}{2}\sigma^2 S^2 \frac{\partial^2 V}{\partial S^2}+(r-D_c)S \frac{\partial V}{\partial S} - rV =0,
+ \end{equation}
+ where $V$ is the price of derivatives securities and $S$ is the value of the underlying asset, $t$ is the time, $r$ is the risk-free interest
+ rate. $\sigma$ is the volatility of the underlying asset, and continuous dividend is $D_c$. When the QUAD method is adapted to Black-Scholes-
+ Merton framemwork, it is convenient to make a lo transform of the underlying asset in the above eq:
+ \begin{equation}\notag
+     x=log S
+ \end{equation}
+ Suppose $y$ is the log transformation of underlying asset at time $t+\delta t$, where $\delta t$ is the time step and it is not restricted to 
+ small time periods. The payoff function is transformed to be $\max(e^y-X,0)$, where $X$ is the strike price. Then the option price is adapted
+ to be :
+ \begin{equation}\label{3}
+     V(x,t)=A(x)\int_{-\infty}^{\infty}B(x,y)V(y,t+\delta t)dy,
+ \end{equation}
+ \begin{equation}\notag
+     A(x)=\frac{1}{\sigma \sqrt{2\pi \delta t}}exp\left(-\frac{kx}{2}-\frac{\sigma^2 k^2 \delta t}{8}-r\delta t\right)
+ \end{equation}
+ and
+ \begin{equation}\notag
+     B(x,y)=exp\left(\frac{-(x-y)^2}{2\sigma^2 \delta t}+\frac{ky}{2}\right),
+ \end{equation}
+ and 
+ \begin{equation}\notag
+     k=\frac{2(r-D_c)}{\sigma^2} -1
+ \end{equation}
+ Through integration\eqref{3} many quadrature methods like Simpson's rule and the trapezium rule can be applied 
+ as a valuation engine. For example, for a European call option, the integrand becomes 
+ \begin{equation}\notag
+     f(x,y)=B(x,y)max(e^y-X,0).
+ \end{equation} 
+ Then, after construction of QUAD grid with discontinuities(strike,earoy exercise or boundaries), the result can be obtained
+ by Richardson extrapolation. The result only coincides with distribution error.
+
+\subsection*{Chen 2014}
+Mathematically, the QUAD method in \cite{Andri_2007} is a application of
+Green's function. Under the Black-Scholes-Merton 
+framemwork, Chen(2014)~\cite{Chen_2014} extend QUAD by using the closed-form approximations for transition density functions, where 
+the Green's function are not available. Then they reformulate the value function in terms of probability density functions.
+The asset price model is 
+\begin{equation}\label{4}
+    V(x,t)=e^{-r \tau} \int_{-\infty}^{\infty} V(y,T)f_\tau(y|x)dy,
+\end{equation}
+where $V$ is the value function of the option with underlying asset $x$ at this time $t$, and $f_\tau(y|x)$ is the risk-neutral 
+condition density function of the asset price over time step $\tau =T-t$. The equivalence with the QUAD method in \cite{Andri_2003} is 
+the Black-Scholes-Merton setup the density as 
+\begin{equation}\label{5}
+    f_\tau(y|x)=\frac{1}{y\sigma \sqrt{2\pi \tau}}exp\left(-\frac{1}{2}\left(\frac{\ln y - \ln x + (r-1/2 \sigma^2) \tau}{\sigma \sqrt{\tau}}\right)^2\right)
+\end{equation}
+The above equation is also mentioned in Su and Newton(2020)~\cite{Su_2020}. The difficulty is to computing the values of transition density $f_\tau (y|x)$ of 
+the log-asset price. This method overcoming the limitation in pricing options under stochastic volatility models such as Heston's SABR (In section 5.2, they 
+show how to reproduce volatility smiles by fully stochastic volatility 
+models - SABR). Then they describe methods of approximating the density function by A\"{i}t-Sahalia's algorithm, the constant elasticity of variance(CEV) 
+process and quadratic local volatility.
+
+\subsection*{Su and Newton 2020}
+Su and Newton(2020)\cite{Su_2020} try finite difference method for approximating transition density function. And combine the numerical method with QUAD method in \cite{Chen_2014}.
+In this paper, they state that the density function of stochastic process is following the Kolmogorov forward and backward equation. Also, they use SABR model to produce the 
+implied volatility smiles in the reality. 
+
+They do not care about wether the transition probability density function has a closed-form expression. They approximate the density by solving the governing partial differential equations
+of the transition density function. 
+
+
+\subsection*{Question}
+1. Should I show the general derivation of Kolmogorov forward equation? I do not find the proof in Karlin and Taylopr (1981). But I will try it agiagin, maybe could you recommend a
+reference?
+
+2.How the value fuction of option \eqref{3} and the value fuction of option \eqref{4}  come? In Su and Newton (2020) \cite{Su_2020} the density function \eqref{5} is obtained by solving the 
+Kolmogorov forward equation with intitial conditon obeying Dirac delta funciton. \eqref{5} also represent in the \cite{Chen_2014}. I am confused. Is the density function a trivial thing? Can 
+we easily solve the parabolic PDE?
+
+3.Does the transition density function in option pricing only governed by Kolmogorov equation? The idea is stated by Su and Newton (2020)\cite{Su_2020}.
+
+4.Idea of my key points about my topic: Option pricing can use the transition density and the Fokker Planck equation(FPE) can provide the source. 
+Then, there is many way to solve FPE, I will try the finite difference method like Crank–Nicolson method. Besides QUAD method provide a powerful way to price complex option.
+Hence, I will combine finite difference method and QUAD method. In terms of the Blakc-Scholes framemwork, changing constan volatility to local volatility(CEV) or to stochastic volatility (SABR model)
+can produce smile volatility. 
+I will first try use these method in pricing a European option and the turn into pathdepent option. But I have not a clear framemwork of my dissertation. Could you please give me some advice?
+
+5.When writing the literature review, I will first find the relevant paper that derivartion of the FPE and the link between this with option pricing. But I do not find clear paper that talking about it.
+Then compare the difference of price option by constant volatility, local volatility and stochastic volatility.Then I will conclude the methods to solve FPE when it can provide a source to derive transition density. 
+While conclude the improvment of QUAD method, I also compare other methods also derive the density function (Maximum likelihood \cite{AtSahalia2007}). What I need to focus more? Could you please give me some advice?
+
+\bibliographystyle{plain}
+\bibliography{/Users/zk/Documents/bibtex/ref.bib}
+\end{document}
